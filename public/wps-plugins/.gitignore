@@ -1,0 +1,5 @@
+node_modules
+.idea
+.debugTemp
+wps-addon-build
+wps-addon-publish
