@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from 'antd';
-import { openInNewWps, openInWps, showToFront, wpsClientState } from '@/utils/wps-oa.util';
+import { sendToNewWps, sendToWps, showToFront, wpsClientState } from '@/utils/wps-oa.util';
 import { WpsMsgStatus } from '@/types/enum/common.enum';
 
 const WpsOaDemo = () => {
 
-  const openNew = () => openInNewWps({
+  const openNew = () => sendToNewWps({
     info: {
       fileName: 'wps测试',
       userName: '郎云松',
@@ -14,7 +14,7 @@ const WpsOaDemo = () => {
     }
   });
 
-  const openDefault = () => openInWps({
+  const openDefault = () => sendToWps({
     info: {
       fileName: 'wps测试',
       userName: '郎云松',
