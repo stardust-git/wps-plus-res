@@ -7,4 +7,5 @@ export enum ClientType {
 export enum WpsMsgStatus {
   成功 = 0,
   失败 = 1,
+  文档已存在 = 10,
 }

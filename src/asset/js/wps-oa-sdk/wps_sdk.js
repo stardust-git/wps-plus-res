@@ -486,6 +486,25 @@
     WpsStartWrapVersionInner(options);
   }
 
+  function ShowToFront(clientType,name, callback){
+    var paramEx = {
+      jsPluginsXml: "",
+      showToFront: true,
+      param: { status: "ShowToFront" },
+    };
+    var options = {
+      clientType: clientType,
+      name: name,
+      func: "",
+      param: paramEx,
+      urlBase: GetUrlBase(),
+      callback: callback,
+      wpsclient: undefined,
+      concurrent: true,
+    };
+    WpsStartWrapVersionInner(options);
+  }
+
   //从外部浏览器远程调用 WPS 加载项中的方法
   var WpsInvoke = {
     InvokeAsHttp: WpsStartWrapVersion,
@@ -498,6 +517,7 @@
     },
     CreateXHR: getHttpObj,
     IsClientRunning: IsClientRunning,
+    ShowToFront:ShowToFront,
   };
 
   window.wpsclients = [];
@@ -930,5 +950,5 @@
     window.WpsAddonMgr = WpsAddonMgr;
   }
 
-  return { WpsInvoke: WpsInvoke, WpsAddonMgr: WpsAddonMgr, version: "1.0.12" };
+  return { WpsInvoke: WpsInvoke,WpsClient, WpsAddonMgr: WpsAddonMgr, version: "1.0.12" };
 });

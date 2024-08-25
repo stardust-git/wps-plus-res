@@ -70,6 +70,13 @@ function GetImage() {
 }
 
 /**
+ * sendToWeb
+ */
+function sendToWeb(msg) {
+  wps.OAAssist.WebNotify(JSON.stringify(msg), true);
+}
+
+/**
  *  web页面调用WPS加载项的方法入口
  */
 function dispatcher(info) {
@@ -78,7 +85,7 @@ function dispatcher(info) {
   var fileName = info['fileName'] + '.xlsx';
   var existFile = wps.PluginStorage.getItem(fileName);
   if (existFile) {
-    alert('该文档已经在WPS打开，请勿重复打开！');
+    sendToWeb({status: 10, message: '该文档已经在WPS打开，请勿重复打开！'});
     return false;
   }
 
@@ -90,13 +97,12 @@ function dispatcher(info) {
 
   var infoJSON = JSON.stringify(info);
 
-  var doc = wps.EtApplication().ActiveWorkbook;
-  wps.PluginStorage.setItem(doc.Name, infoJSON);
+  wps.PluginStorage.setItem(fileName, infoJSON);
   wps.PluginStorage.setItem('token', info['token']);
 
   wps.ribbonUI.Invalidate(); // 刷新Ribbon自定义按钮的状态
 
-  setTimeout(() => activeTab('wpsAddinTab'), 1000); // 激活页面必须要页签显示出来，所以做1秒延迟
-
-  return {message: 'ok', app: wps.Application.Name};
+  setTimeout(() => activeTab('wpsAddinTab_local'), 1000); // 激活页面必须要页签显示出来，所以做1秒延迟
+  sendToWeb({status: 0, message: '文档打开成功！'});
+  return true;
 }
