@@ -52,7 +52,7 @@ function saveFile() {
  * 打开对话面板
  */
 function showDialog() {
-  wps.Application.ShowDialog('http://localhost:6789/index', '测试弹框');
+  wps.ShowDialog('http://localhost:6789/index', '测试弹框');
 }
 
 /**
