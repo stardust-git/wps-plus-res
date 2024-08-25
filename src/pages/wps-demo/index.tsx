@@ -1,8 +1,7 @@
-import React from "react";
-import WpsAddIn from "@/component/WpsAddIn";
+import React from 'react';
 
 const WpsDemo = () => {
-  return window.wps ? <WpsAddIn /> : "没有Wps实例";
+  return 'hello-wps';
 };
 
 export default WpsDemo;
