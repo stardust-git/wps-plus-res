@@ -1,7 +1,7 @@
 <customUI onLoad="OnWPSWorkTabLoad">
   <ribbon startFromScratch="false">
     <tabs>
-      <tab id="wpsAddinTab_local" label="wps测试">
+      <tab id="HelloWps" label="HelloWps">
         <group id="btnDemoGroup" label="group1">
           <button id="btnShowTaskPane" label="保存文件" onAction="OnAction" getImage="GetImage" size="large"/>
         </group>

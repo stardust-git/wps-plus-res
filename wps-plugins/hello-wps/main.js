@@ -66,7 +66,7 @@ function OnAction() {
  * 获取图片方法
  */
 function GetImage() {
-  return 'images/1.svg';
+  return 'images/time.jpg';
 }
 
 /**
