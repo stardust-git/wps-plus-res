@@ -30,7 +30,7 @@ function OnAction() {
  * 获取图片方法
  */
 function GetImage() {
-  return 'images/time.jpg';
+  return '../common/images/time.jpg';
 }
 
 /**
