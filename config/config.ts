@@ -19,14 +19,15 @@ export default defineConfig({
             from: 'wps-plugins/**/*',
             to: '',
             globOptions: {
-              ignore: ['**/package.json', '**/package-lock.json', '**/wps-addon-build/**', '**/wps-addon-publish/**']
+              ignore: ['**/package.json', '**/package-lock.json']
             },
             transform: async (content, path) => {
               if (path.endsWith('.js')) {
                 const { code } = await minify(content.toString(), {
                   mangle: {
-                    properties: true,
                     toplevel: true,
+                    keep_classnames: true,
+                    keep_fnames: true
                   },
                   sourceMap: false,
                 });

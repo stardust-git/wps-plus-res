@@ -1,5 +1,5 @@
 // 加载时会执行的方法，见ribbon.xml文件
-function OnWPSWorkTabLoad(ribbonUI) {
+window.OnWPSWorkTabLoad = (ribbonUI) => {
   wps.ribbonUI = ribbonUI;
   //挂载WPS的表格事件处理函数
   // wps.ApiEvent.AddApiEventListener("WindowActivate", OnWindowActivate);
@@ -16,27 +16,27 @@ function OnWPSWorkTabLoad(ribbonUI) {
   // wps.CommandBars.FindControl(null, 848).Visible = false;
 
   return true;
-}
+};
 
 /**
  * Action
  */
-function OnAction() {
+window.OnAction = () => {
   // EtUtils.saveAsUrl();
   ComUtils.showDialog();
-}
+};
 
 /**
  * 获取图片方法
  */
-function GetImage() {
+window.GetImage = () => {
   return '../common/images/time.jpg';
-}
+};
 
 /**
  *  web页面调用WPS加载项的方法入口
  */
-function dispatcher(info) {
+window.dispatcher = (info) => {
   if (!info) return;
 
   const fileName = info['fileName'] + '.xlsx';
@@ -60,4 +60,4 @@ function dispatcher(info) {
   setTimeout(() => ComUtils.activeTab('HelloWps'), 1000); // 激活页面必需要页签显示出来，所以做1秒延迟
   ComUtils.sendToWeb({status: 0, message: '文档打开成功！'});
   return true;
-}
+};
