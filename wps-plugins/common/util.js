@@ -4,7 +4,43 @@ window.KsoFileTypeEnum = {
   表格: 'et',
 };
 
+// window.KsoFileUtilMap = {
+//   [KsoFileTypeEnum.文档]: 'wps',
+//   演示: 'wpp',
+//   表格: 'et',
+// };
+
 window.ComUtils = (function () {
+
+  /**
+   * 处理Web端的文件
+   * @param {Object} info
+   * @param {string} info.fileName 文件名
+   * @param {string} info.userName 用户名
+   * @param {string} info.token 鉴权
+   * @param {number} [info.isOA] oa文档类型
+   * @param {string} info.downloadPath 下载链接
+   * @param {string} addonName 触发的加载项名
+   * @returns {boolean}
+   */
+  function handelWebFileInfo(addonName,info) {
+    if (!info || !info.fileName || !info.downloadPath) return false;
+    const existFile = ComUtils.getStore(info.fileName);
+    if (existFile) {
+      sendToWeb({status: 10, message: '该文档已经在WPS打开，请勿重复打开！'});
+      return false;
+    }
+    const infoJSON = JSON.stringify(info);
+    wps.Application.UserName = info['userName'];// 设置当前文档对应的用户名
+
+    info.isOA = 1; //设置OA打开文档的标志：从服务端来的OA文档
+    setStore(fileName, infoJSON);
+    setStore('token', info['token']);
+    refreshRibbon();
+    setTimeout(() => ComUtils.activeTab('HelloWps'), 1000); // 激活页面必需要页签显示出来，所以做1秒延迟
+    sendToWeb({status: 0, message: '文档打开成功！'});
+    return true;
+  }
 
   /**
    * 获取当前文件类型
@@ -84,7 +120,8 @@ window.ComUtils = (function () {
     showDialog,
     getStore,
     setStore,
-    getCurFileType
+    getCurFileType,
+    handelWebFileInfo
   };
 })();
 
@@ -121,13 +158,40 @@ window.EtUtils = (function () {
 })();
 
 window.WpsUtils = (function () {
+  /**
+   * 从Url中打开
+   * @param {string} [url] 服务端的Url
+   * @param {string | Function} [success] 成功的回调，回调为注册在window中的方法名或函数
+   * @param {string} [fail] 失败的回调，回调为注册在window中的方法名或函数
+   */
+  function openFromUrl(url = 'http://127.0.0.1:1024/upload/123.xlsx', success, fail) {
+    wps.Documents.OpenFromUrl(url, success, fail);
+  }
 
-  return {};
+  /**
+   * 设置文档作者
+   * @param name
+   */
+  function setUserName(name) {
+  }
+  return {
+    openFromUrl
+  };
 })();
 
 window.WppUtils = (function () {
-
-  return {};
+  /**
+   * 从Url中打开
+   * @param {string} [url] 服务端的Url
+   * @param {string | Function} [success] 成功的回调，回调为注册在window中的方法名或函数
+   * @param {string} [fail] 失败的回调，回调为注册在window中的方法名或函数
+   */
+  function openFromUrl(url = 'http://127.0.0.1:1024/upload/123.xlsx', success, fail) {
+    wps.Presentations.OpenFromUrl(url, success, fail);
+  }
+  return {
+    openFromUrl
+  };
 })();
 
 
