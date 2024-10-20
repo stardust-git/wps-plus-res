@@ -1,4 +1,27 @@
+window.KsoFileTypeEnum = {
+  文档: 'wps',
+  演示: 'wpp',
+  表格: 'et',
+};
+
 window.ComUtils = (function () {
+
+  /**
+   * 获取当前文件类型
+   * @returns {string | void}
+   */
+  function getCurFileType() {
+    if (wps.WpsApplication) {
+      return KsoFileTypeEnum.文档;
+    } else if (wps.EtApplication) {
+      return KsoFileTypeEnum.表格;
+    } else if (wps.WppApplication) {
+      return KsoFileTypeEnum.演示;
+    } else {
+      return;
+    }
+  }
+
   /**
    * 激活插件Tab
    * @param {string} tabId ribbon中的tabId
@@ -61,6 +84,7 @@ window.ComUtils = (function () {
     showDialog,
     getStore,
     setStore,
+    getCurFileType
   };
 })();
 

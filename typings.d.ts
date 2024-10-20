@@ -9,4 +9,3 @@ declare module '*.svg' {
 }
 declare module "qs";
 declare module "src/asset/js/web-office-sdk-v1.1.19";
-import "wps-jsapi/src/index.d.ts";

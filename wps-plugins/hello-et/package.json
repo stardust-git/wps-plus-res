@@ -1,0 +1,6 @@
+{
+  "name" : "hello-et",
+  "addonType" : "et",
+  "version" : "1.0.0",
+  "description" : "wps加载项示例，表格"
+}
