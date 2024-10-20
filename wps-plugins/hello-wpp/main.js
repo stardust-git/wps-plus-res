@@ -1,3 +1,5 @@
+const comUtils = new window.ComUtils(WpsFileTypeEnum.演示, 'HelloWps');
+
 // 加载时会执行的方法，见ribbon.xml文件
 window.OnWPSWorkTabLoad = (ribbonUI) => {
   wps.ribbonUI = ribbonUI;
@@ -22,8 +24,7 @@ window.OnWPSWorkTabLoad = (ribbonUI) => {
  * Action
  */
 window.OnAction = () => {
-  // EtUtils.saveAsUrl();
-  ComUtils.showDialog();
+  comUtils.uploadCurFile();
 };
 
 /**
@@ -35,14 +36,8 @@ window.GetImage = () => {
 
 /**
  * 处理Web端的文件
- * @param {Parameters<ComUtils.handelWebFileInfo>[1]} info
- * @returns {boolean}
+ * @param {Parameters<HandelWebFileInfoFunc>[0]} info
  */
 window.dispatcher = (info) => {
-  if (!ComUtils.handelWebFileInfo('HelloWps', info)) {
-    return false;
-  }
-  WppUtils.openFromUrl(info.downloadPath);
-  ComUtils.sendToWeb({status: 0, message: '文档打开成功！'});
-  return true;
+  comUtils.handelWebFileInfo(info);
 };
