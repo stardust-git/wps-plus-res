@@ -124,52 +124,6 @@ window.ComUtils = class ComUtils {
   mainTabId;
 
   /**
-   * 初始化文件类型
-   * @param {WpsFileTypeEnum} fileType
-   * @param {string} [mainTabId] 主要的TabId
-   */
-  constructor(fileType, mainTabId) {
-    const type = fileType || ComUtils.getCurFileType();
-    if (!type) {
-      throw new Error('当前客户端类型不存在');
-    }
-    this.fileType = type;
-    this.mainTabId = mainTabId;
-  }
-
-  /**
-   * 处理Web端的文件
-   * @callback HandelWebFileInfoFunc
-   * @param {Object} info
-   * @param {string} info.fileName 文件名
-   * @param {string} info.userName 用户名
-   * @param {string} info.token 鉴权
-   * @param {number} [info.isOA] oa文档类型
-   * @param {string} info.downloadPath 下载链接
-   * @returns {boolean}
-   */
-  handelWebFileInfo(info) {
-    if (!info || !info.fileName || !info.downloadPath) return false;
-    const existFile = ComUtils.getStore(info.fileName);
-    if (existFile) {
-      ComUtils.sendToWeb({status: 10, message: '该文档已经在WPS打开，请勿重复打开！'});
-      return false;
-    }
-    const infoJSON = JSON.stringify(info);
-    wps.Application.UserName = info['userName'];// 设置当前文档对应的用户名
-
-    WpsFileTypeMap[this.fileType].openFromUrl(info.downloadPath);
-
-    info.isOA = 1; //设置OA打开文档的标志：从服务端来的OA文档
-    ComUtils.setStore(fileName, infoJSON);
-    ComUtils.setStore('token', info['token']);
-    ComUtils.refreshRibbon();
-    setTimeout(() => ComUtils.activeTab(this.mainTabId), 1000); // 激活页面必需要页签显示出来，所以做1秒延迟
-    ComUtils.sendToWeb({status: 0, message: '文档打开成功！'});
-    return true;
-  }
-
-  /**
    * 获取当前文件类型
    * @returns {string | void}
    */
@@ -241,6 +195,43 @@ window.ComUtils = class ComUtils {
   }
 
   /**
+   * 初始化文件类型
+   * @param {WpsFileTypeEnum} fileType
+   * @param {string} [mainTabId] 主要的TabId
+   */
+  constructor(fileType, mainTabId) {
+    const type = fileType || ComUtils.getCurFileType();
+    if (!type) {
+      throw new Error('当前客户端类型不存在');
+    }
+    this.fileType = type;
+    this.mainTabId = mainTabId;
+  }
+
+  /**
+   * todo 自定义属性操作 添加自定义属性
+   * @param {string} name 自定义属性名
+   * @param {string} value 自定义属性值
+   */
+   addCustomProps(name, value) {
+    if (wps.ActiveWorkbook) {
+      wps.ActiveWorkbook.CustomDocumentProperties.Add({Name: name, Value: value, Type: 4});
+    }
+  }
+
+  /**
+   * todo 自定义属性操作 获取自定义属性
+   * @param {string} name 自定义属性名
+   */
+  getCustomProps(name) {
+    if (wps.ActiveWorkbook) {
+      return wps.ActiveWorkbook.CustomDocumentProperties.Item(name);
+    }
+    return null;
+  }
+
+
+  /**
    * 获取当前文件
    * @returns {File}
    */
@@ -270,5 +261,39 @@ window.ComUtils = class ComUtils {
         }
         alert('上传失败');
       });
+  }
+
+
+
+  /**
+   * 处理Web端的文件
+   * @callback HandelWebFileInfoFunc
+   * @param {Object} info
+   * @param {string} info.fileName 文件名
+   * @param {string} info.userName 用户名
+   * @param {string} info.token 鉴权
+   * @param {number} [info.isOA] oa文档类型
+   * @param {string} info.downloadPath 下载链接
+   * @returns {boolean}
+   */
+  handelWebFileInfo(info) {
+    if (!info || !info.fileName || !info.downloadPath) return false;
+    const existFile = ComUtils.getStore(info.fileName);
+    if (existFile) {
+      ComUtils.sendToWeb({status: 10, message: '该文档已经在WPS打开，请勿重复打开！'});
+      return false;
+    }
+    const infoJSON = JSON.stringify(info);
+    wps.Application.UserName = info['userName'];// 设置当前文档对应的用户名
+
+    WpsFileTypeMap[this.fileType].openFromUrl(info.downloadPath);
+
+    info.isOA = 1; //设置OA打开文档的标志：从服务端来的OA文档
+    ComUtils.setStore(fileName, infoJSON);
+    ComUtils.setStore('token', info['token']);
+    ComUtils.refreshRibbon();
+    setTimeout(() => ComUtils.activeTab(this.mainTabId), 1000); // 激活页面必需要页签显示出来，所以做1秒延迟
+    ComUtils.sendToWeb({status: 0, message: '文档打开成功！'});
+    return true;
   }
 };
