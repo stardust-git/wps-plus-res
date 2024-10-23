@@ -296,4 +296,20 @@ window.ComUtils = class ComUtils {
     ComUtils.sendToWeb({status: 0, message: '文档打开成功！'});
     return true;
   }
+
+  /**
+   * todo 打开任务面板：落地上传招呼文档
+   */
+  openTaskPane() {
+    const tsId = wps.PluginStorage.getItem('taskpane_id');
+    if (!tsId) {
+      const tskpane = wps.CreateTaskPane(environment.directorySelector);
+      const id = tskpane.ID;
+      wps.PluginStorage.setItem('taskpane_id', id);
+      tskpane.Visible = true;
+    } else {
+      const tskpane = wps.GetTaskPane(tsId);
+      tskpane.Visible = !tskpane.Visible;
+    }
+  }
 };
