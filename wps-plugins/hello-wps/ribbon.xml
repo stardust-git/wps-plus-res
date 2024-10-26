@@ -3,7 +3,8 @@
     <tabs>
       <tab id="HelloWps" label="HelloWps">
         <group id="btnDemoGroup" label="group1">
-          <button id="btnShowTaskPane" label="点我测试" onAction="OnAction" getImage="GetImage" size="large"/>
+          <button id="testBtn" label="点我测试" onAction="OnAction" getImage="OnGetImage"
+                  getEnabled="OnGetEnabled" getVisible="OnGetVisible" size="large"/>
         </group>
       </tab>
     </tabs>

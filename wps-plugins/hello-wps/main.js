@@ -1,37 +1,38 @@
-const comUtils = new ComUtils(WpsFileTypeEnum.文档, 'HelloWps');
+const comUtils = new ComUtils(WpsClientTypeEnum.文档, 'HelloWps');
 
-// 加载时会执行的方法，见ribbon.xml文件
+/**
+ * wps加载时事件
+ */
 window.OnWPSWorkTabLoad = (ribbonUI) => {
-  wps.ribbonUI = ribbonUI;
-  //挂载WPS的表格事件处理函数
-  // wps.ApiEvent.AddApiEventListener("WindowActivate", OnWindowActivate);
-  // wps.ApiEvent.AddApiEventListener("WorkbookBeforeClose", OnWorkbookBeforeClose);
-  // wps.ApiEvent.AddApiEventListener("WorkbookBeforeSave", FileOutputDisable);
-  // wps.ApiEvent.AddApiEventListener("WorkbookBeforePrint", FileOutputDisable);
-  // wps.ApiEvent.AddApiEventListener("WorkbookOpen", OnWorkbookOpen);
-  // wps.ApiEvent.AddApiEventListener("NewWorkbook", OnWorkbookNew);
-  // wps.ApiEvent.AddApiEventListener("DocumentBeforeCopy", OnDocumentBeforeCopy);
-  // wps.ApiEvent.AddApiEventListener("DocumentBeforePaste", OnDocumentBeforePaste);
-  // wps.ApiEvent.AddApiEventListener("DocumentRightsInfo", FileOutputDisable);
-  // //"移动或复制工作表(&M)..."
-  // wps.CommandBars.FindControl(null, 848).Enabled = false;
-  // wps.CommandBars.FindControl(null, 848).Visible = false;
-
-  return true;
+  return comUtils.dealWpsWorkTabLoad(ribbonUI);
 };
 
 /**
- * Action
+ * Action事件
  */
-window.OnAction = () => {
-  comUtils.uploadCurFile();
+window.OnAction = (control) => {
+  return comUtils.dealAction(control);
 };
 
 /**
  * 获取图片方法
  */
-window.GetImage = () => {
-  return '../common/images/time.jpg';
+window.OnGetImage = (control) => {
+  return comUtils.getRibbonImage(control);
+};
+
+/**
+ * 启用按钮
+ */
+window.OnGetEnabled = (control) => {
+  return comUtils.getRibbonEnabled(control);
+};
+
+/**
+ * 可视按钮
+ */
+window.OnGetVisible = (control) => {
+  return comUtils.getRibbonVisible(control);
 };
 
 /**

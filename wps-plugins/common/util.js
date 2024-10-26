@@ -1,150 +1,115 @@
-window.WpsFileTypeEnum = {
-  文档: 'wps',
-  演示: 'wpp',
-  表格: 'et',
-};
-
 window.EtUtils = (function () {
   return {
-    type: WpsFileTypeEnum.表格,
-    activeDto() {
+    type: WpsClientTypeEnum.表格,
+
+    /**
+     * @returns {Et.EtWorkbook}
+     */
+    getActiveDto() {
       return wps.ActiveWorkbook;
     },
-    /***
-     * 保存文件，并返回当前路径
-     * @callback SaveWpsFile
-     * @returns {string}
-     */
-    save: () => {
-      wps.ActiveWorkbook.Save();
-      return wps.ActiveWorkbook.FullName.toString();
-    },
+
     /**
-     * 从Url中打开
-     * @callback OpenWpsFromUrl
-     * @param {string} [url] 服务端的Url
-     * @param {string | Function} [success] 成功的回调，回调为注册在window中的方法名或函数
-     * @param {string} [fail] 失败的回调，回调为注册在window中的方法名或函数
+     * @returns {Et.EtWorkbooks}
      */
-    openFromUrl: (url = 'http://127.0.0.1:1024/upload/123.xlsx', success, fail) => {
-      wps.Workbooks.OpenFromUrl(url, success, fail);
-    },
-    /**
-     * 将当前文件另存为到其他服务端Url上
-     * @callback SaveAsWpsUrl
-     * @param {string} [url] 服务端的Url
-     * @param {string | Function} [success] 成功的回调，回调为注册在window中的方法名或函数
-     * @param {string} [fail] 失败的回调，回调为注册在window中的方法名或函数
-     */
-    saveAsUrl: (url = `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, success, fail) => {
-      const doc = wps.ActiveWorkbook;
-      if (!doc) {
-        alert('空文档不能保存！');
-        return;
-      }
-      doc.SaveAsUrl(doc.Name, `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, 'file', success, fail);
+    getWorkDtos() {
+      return wps.EtApplication().Workbooks;
     },
   };
 })();
 
 window.WpsUtils = (function () {
   return {
-    type: WpsFileTypeEnum.文档,
-    activeDto() {
+    type: WpsClientTypeEnum.文档,
+
+    /**
+     * @returns {Wps.WpsDocument}
+     */
+    getActiveDto() {
       return wps.ActiveDocument;
     },
-    /***
-     * @type SaveWpsFile
-     */
-    save: () => {
-      wps.ActiveDocument.Save();
-      return wps.ActiveDocument.FullName.toString();
-    },
+
     /**
-     * @type OpenWpsFromUrl
+     * @returns {Wps.WpsDocuments}
      */
-    openFromUrl: (url = 'http://127.0.0.1:1024/upload/123.xlsx', success, fail) => {
-      wps.Documents.OpenFromUrl(url, success, fail);
-    },
-    /**
-     * @type {SaveAsWpsUrl}
-     */
-    saveAsUrl: (url = `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, success, fail) => {
-      const doc = wps.ActiveDocument;
-      if (!doc) {
-        alert('空文档不能保存！');
-        return;
-      }
-      doc.SaveAsUrl(doc.Name, `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, 'file', success, fail);
+    getWorkDtos() {
+      return wps.WpsApplication().Documents;
     },
   };
 })();
 
 window.WppUtils = (function () {
   return {
-    type: WpsFileTypeEnum.演示,
-    activeDto() {
+    type: WpsClientTypeEnum.演示,
+
+    /**
+     * @returns {Wpp.WppPresentation}
+     */
+    getActiveDto() {
       return wps.ActivePresentation;
     },
+
     /**
-     * @type {SaveWpsFile}
+     * @returns {Wpp.WppPresentations}
      */
-    save: () => {
-      wps.ActivePresentation.Save();
-      return wps.ActivePresentation.FullName.toString();
-    },
-    /**
-     * @type {OpenWpsFromUrl}
-     */
-    openFromUrl: (url = 'http://127.0.0.1:1024/upload/123.xlsx', success, fail) => {
-      wps.Presentations.OpenFromUrl(url, success, fail);
-    },
-    /**
-     * @type {SaveAsWpsUrl}
-     */
-    saveAsUrl: (url = `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, success, fail) => {
-      const doc = wps.ActivePresentation;
-      if (!doc) {
-        alert('空文档不能保存！');
-        return;
-      }
-      doc.SaveAsUrl(doc.Name, `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, 'file', success, fail);
+    getWorkDtos() {
+      return wps.WppApplication().Presentations;
     },
   };
 })();
 
-window.WpsFileTypeMap = {
-  [WpsFileTypeEnum.表格]: window.EtUtils,
-  [WpsFileTypeEnum.文档]: window.WpsUtils,
-  [WpsFileTypeEnum.演示]: window.WppUtils,
+window.WpsClientTypeMap = {
+  [WpsClientTypeEnum.表格]: window.EtUtils,
+  [WpsClientTypeEnum.文档]: window.WpsUtils,
+  [WpsClientTypeEnum.演示]: window.WppUtils,
 };
 
+window.RibbonUtils = (function () {
+  return {
+    /**
+     * 激活插件Tab
+     * @param {string} tabId ribbon中的tabId
+     */
+    activeTab(tabId) {
+      wps.ribbonUI.ActivateTab(tabId);
+    },
+
+    /**
+     * 通知wps刷新以几个按饰的状态
+     * @param {string} controlId
+     */
+    refreshControl(controlId) {
+      wps.ribbonUI.InvalidateControl(controlId);
+    },
+
+    /**
+     *  刷新整个Ribbon按钮的状态
+     */
+    refreshRibbon() {
+      wps.ribbonUI.Invalidate();
+    },
+
+  };
+})();
+
 window.ComUtils = class ComUtils {
-  fileType;
+  clientType;
   mainTabId;
 
   /**
    * 获取当前文件类型
    * @returns {string | void}
    */
-  static getCurFileType() {
+  static getCurClientType() {
     if (wps.WpsApplication) {
-      return WpsFileTypeEnum.文档;
+      return WpsClientTypeEnum.文档;
     } else if (wps.EtApplication) {
-      return WpsFileTypeEnum.表格;
+      return WpsClientTypeEnum.表格;
     } else if (wps.WppApplication) {
-      return WpsFileTypeEnum.演示;
+      return WpsClientTypeEnum.演示;
     } else {
       return;
     }
-  }
-
-  /**
-   * 激活插件Tab
-   * @param {string} tabId ribbon中的tabId
-   */
-  static activeTab(tabId) {
-    wps.ribbonUI.ActivateTab(tabId);
   }
 
   /**
@@ -155,13 +120,6 @@ window.ComUtils = class ComUtils {
    */
   static sendToWeb(msg) {
     wps.OAAssist.WebNotify(JSON.stringify(msg), true);
-  }
-
-  /**
-   *  刷新Ribbon按钮的状态
-   */
-  static refreshRibbon() {
-    wps.ribbonUI.Invalidate();
   }
 
   /**
@@ -195,51 +153,77 @@ window.ComUtils = class ComUtils {
   }
 
   /**
+   * 关闭对话框
+   */
+  static closeShowDialog() {
+    window.close();
+  }
+
+  /**
    * 初始化文件类型
-   * @param {WpsFileTypeEnum} fileType
+   * @param {WpsClientTypeEnum} clientType
    * @param {string} [mainTabId] 主要的TabId
    */
-  constructor(fileType, mainTabId) {
-    const type = fileType || ComUtils.getCurFileType();
+  constructor(clientType, mainTabId) {
+    const type = clientType || ComUtils.getCurClientType();
     if (!type) {
       throw new Error('当前客户端类型不存在');
     }
-    this.fileType = type;
+    this.clientType = type;
     this.mainTabId = mainTabId;
   }
 
   /**
-   * todo 自定义属性操作 添加自定义属性
-   * @param {string} name 自定义属性名
-   * @param {string} value 自定义属性值
+   * 获取当前文档对象
+   * @returns {EtWorkbook |  WpsDocument | WppPresentation}
    */
-   addCustomProps(name, value) {
-    if (wps.ActiveWorkbook) {
-      wps.ActiveWorkbook.CustomDocumentProperties.Add({Name: name, Value: value, Type: 4});
-    }
+  getActionDto() {
+    return WpsClientTypeMap[this.clientType].getActiveDto();
   }
 
   /**
-   * todo 自定义属性操作 获取自定义属性
+   * 得到当前工作簿对象
+   * @returns {EtWorkbooks |  WpsDocuments | WppPresentations}
+   */
+  getWorkDtos() {
+    return WpsClientTypeMap[this.clientType].getWorkDtos();
+  }
+
+  /**
+   * 添加自定义属性
+   * @param {string} name 自定义属性名
+   * @param {string} value 自定义属性值
+   */
+  addCustomProps(name, value) {
+    const activeDto = this.getActionDto();
+    if (activeDto) {
+      activeDto.CustomDocumentProperties.Add({Name: name, Value: value, Type: 4});
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 获取自定义属性
    * @param {string} name 自定义属性名
    */
   getCustomProps(name) {
-    if (wps.ActiveWorkbook) {
+    const activeDto = this.getActionDto();
+    if (activeDto) {
       return wps.ActiveWorkbook.CustomDocumentProperties.Item(name);
     }
     return null;
   }
-
 
   /**
    * 获取当前文件
    * @returns {File}
    */
   getCurFile() {
-    const path = WpsFileTypeMap[this.fileType].save();
+    const path = this.saveCurFile();
     const arrayBuffer = wps.FileSystem.ReadFileAsArrayBuffer(path);
     const blob = new Blob([arrayBuffer], {type: 'application/octet-stream'});
-    return new File([blob], WpsFileTypeMap[this.fileType].activeDto().Name);
+    return new File([blob], WpsClientTypeMap[this.clientType].getActiveDto().Name);
   }
 
   /**
@@ -263,8 +247,6 @@ window.ComUtils = class ComUtils {
       });
   }
 
-
-
   /**
    * 处理Web端的文件
    * @callback HandelWebFileInfoFunc
@@ -286,19 +268,19 @@ window.ComUtils = class ComUtils {
     const infoJSON = JSON.stringify(info);
     wps.Application.UserName = info['userName'];// 设置当前文档对应的用户名
 
-    WpsFileTypeMap[this.fileType].openFromUrl(info.downloadPath);
+    WpsClientTypeMap[this.clientType].openFromUrl(info.downloadPath);
 
     info.isOA = 1; //设置OA打开文档的标志：从服务端来的OA文档
     ComUtils.setStore(fileName, infoJSON);
     ComUtils.setStore('token', info['token']);
-    ComUtils.refreshRibbon();
-    setTimeout(() => ComUtils.activeTab(this.mainTabId), 1000); // 激活页面必需要页签显示出来，所以做1秒延迟
+    RibbonUtils.refreshRibbon();
+    setTimeout(() => RibbonUtils.activeTab(this.mainTabId), 1000); // 激活页面必需要页签显示出来，所以做1秒延迟
     ComUtils.sendToWeb({status: 0, message: '文档打开成功！'});
     return true;
   }
 
   /**
-   * todo 打开任务面板：落地上传招呼文档
+   * 打开任务面板
    */
   openTaskPane() {
     const tsId = wps.PluginStorage.getItem('taskpane_id');
@@ -311,5 +293,112 @@ window.ComUtils = class ComUtils {
       const tskpane = wps.GetTaskPane(tsId);
       tskpane.Visible = !tskpane.Visible;
     }
+  }
+
+  /**
+   * 处理wps加载项加载时操作
+   * @param ribbonUI
+   * @returns {boolean}
+   */
+  dealWpsWorkTabLoad(ribbonUI) {
+    wps.ribbonUI = ribbonUI;
+    //挂载WPS的表格事件处理函数
+    // wps.ApiEvent.AddApiEventListener("WindowActivate", OnWindowActivate);
+    // wps.ApiEvent.AddApiEventListener("WorkbookBeforeClose", OnWorkbookBeforeClose);
+    // wps.ApiEvent.AddApiEventListener("WorkbookBeforeSave", FileOutputDisable);
+    // wps.ApiEvent.AddApiEventListener("WorkbookBeforePrint", FileOutputDisable);
+    // wps.ApiEvent.AddApiEventListener("WorkbookOpen", OnWorkbookOpen);
+    // wps.ApiEvent.AddApiEventListener("NewWorkbook", OnWorkbookNew);
+    // wps.ApiEvent.AddApiEventListener("DocumentBeforeCopy", OnDocumentBeforeCopy);
+    // wps.ApiEvent.AddApiEventListener("DocumentBeforePaste", OnDocumentBeforePaste);
+    // wps.ApiEvent.AddApiEventListener("DocumentRightsInfo", FileOutputDisable);
+    // //"移动或复制工作表(&M)..."
+    // wps.CommandBars.FindControl(null, 848).Enabled = false;
+    // wps.CommandBars.FindControl(null, 848).Visible = false;
+
+    return true;
+
+  }
+
+  /**
+   * 处理wps Action事件
+   * @param control
+   * @returns {boolean}
+   */
+  dealAction(control) {
+    const eleId = control.Id;
+    switch (eleId) {
+      case RibbonControlEnum.testBtn:
+        ComUtils.showDialog();
+        break;
+      default:
+        break;
+    }
+    return true;
+  }
+
+  /**
+   * 得到Ribbon的图片
+   * @param control
+   */
+  getRibbonImage(control) {
+    const eleId = control.Id;
+    switch (eleId) {
+      case RibbonControlEnum.testBtn:
+        return '../common/images/time.jpg';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * 获取Ribbon是否启用
+   * @param control
+   * @returns {boolean}
+   */
+  getRibbonEnabled(control) {
+    return true;
+  }
+
+  /**
+   * 获取Ribbon是否显示
+   * @param control
+   * @returns {boolean}
+   */
+  getRibbonVisible(control) {
+    return true;
+  }
+
+  /***
+   * 保存文件，并返回当前路径
+   * @returns {string}
+   */
+  saveCurFile() {
+    const activeDto = this.getActionDto();
+    activeDto.Save();
+    return activeDto.FullName.toString();
+  }
+
+  /**
+   * 从Url中打开
+   * @param {string} [url] 服务端的Url
+   * @param {string | Function} [success] 成功的回调，回调为注册在window中的方法名或函数
+   * @param {string} [fail] 失败的回调，回调为注册在window中的方法名或函数
+   */
+  openFromUrl(url = 'http://127.0.0.1:1024/upload/123.xlsx', success, fail) {
+    const workDtos = this.getWorkDtos();
+    workDtos.OpenFromUrl(url, success, fail);
+  }
+
+  /**
+   * 将当前文件另存为到其他服务端Url上
+   * @callback SaveAsWpsUrl
+   * @param {string} [url] 服务端的Url
+   * @param {string | Function} [success] 成功的回调，回调为注册在window中的方法名或函数
+   * @param {string} [fail] 失败的回调，回调为注册在window中的方法名或函数
+   */
+  saveAsUrl(url = `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, success, fail) {
+    const doc = this.getActionDto();
+    doc.SaveAsUrl(doc.Name, `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, 'file', success, fail);
   }
 };
