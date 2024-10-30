@@ -7,5 +7,6 @@ declare module '*.svg' {
   const url: string;
   export default url;
 }
-declare module "qs";
-declare module "src/asset/js/web-office-sdk-v1.1.19";
+declare module 'qs';
+declare module 'src/asset/js/web-office-sdk-v1.1.19';
+declare module 'wps';
