@@ -64,6 +64,51 @@ window.WpsClientTypeMap = {
   [WpsClientTypeEnum.演示]: window.WppUtils,
 };
 
+
+
+window.ServerUtils = (function () {
+  /**
+   网络请求工具@param {string} url@param {RequestInit} [options]@return {Promise<Object>}
+   */
+  const server = (url, options = {}) => {
+    const {headers, method = 'get', ...resOptions} = options;
+    const authString = wps.PluginStorage.getItem(PluginStorageEnum.authorization);
+    return fetch(url, {
+      method,
+      headers: {
+        authorization: authString && JSON.parse(authString),
+        ...headers,
+      },
+      ...resOptions,
+    }).then((response) => {
+      if (response.status !== 200) {
+        return Promise.reject(response.statusText);
+      }
+      const newAuth = response.headers.get('authorization');
+      if (newAuth) {
+        wps.PluginStorage.setItem(PluginStorageEnum.authorization, JSON.stringify(newAuth));
+      }
+      return response.json();
+    }).then((response) => {
+      if (response.returnCode !== environment.successCode) {
+        return Promise.reject(response.errorMsg);
+      }
+      return response.body;
+    });
+  };
+  /**
+   获取文章@param {string} docId
+   */
+  const getBizDoc = (docId) => {
+    return server(`/document/biz/doc?docId=${docId}`);
+  };
+  return {
+    server,
+    getBizDoc,
+  };
+})();
+
+
 window.RibbonUtils = (function () {
   return {
     /**
