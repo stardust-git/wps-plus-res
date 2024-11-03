@@ -66,7 +66,10 @@ window.WpsClientTypeMap = {
 
 window.ServerUtils = (function () {
   /**
-   网络请求工具@param {string} url@param {RequestInit} [options]@return {Promise<Object>}
+   * 网络请求工具
+   * @param {string} url
+   * @param {RequestInit} [options]
+   * @return {Promise<Object>}
    */
   const server = (url, options = {}) => {
     const {headers, method = 'get', ...resOptions} = options;
@@ -95,14 +98,27 @@ window.ServerUtils = (function () {
     });
   };
   /**
-   获取文章@param {string} docId
+   * 获取文章@param {string} docId
    */
   const getBizDoc = (docId) => {
     return server(`/document/biz/doc?docId=${docId}`);
   };
+
+  /**
+   * mock 接口
+   * @return {Promise<void>}
+   */
+  const mockApi = () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  };
   return {
     server,
     getBizDoc,
+    mockApi,
   };
 })();
 
@@ -137,6 +153,7 @@ window.RibbonUtils = (function () {
 window.ComUtils = class ComUtils {
   clientType;
   mainTabId;
+  loading = false;
 
   /**
    * 获取当前文件类型
@@ -372,6 +389,20 @@ window.ComUtils = class ComUtils {
   }
 
   /**
+   * 上传操作
+   */
+  uploadOption() {
+    this.loading = true;
+    RibbonUtils.refreshRibbon(RibbonControlEnum.testBtn);
+    ServerUtils.mockApi().then(() => {
+      alert('上传成功');
+    }).finally(() => {
+      this.loading = false;
+      RibbonUtils.refreshRibbon(RibbonControlEnum.testBtn);
+    });
+  }
+
+  /**
    * 处理wps Action事件
    * @param control
    * @returns {boolean}
@@ -380,7 +411,7 @@ window.ComUtils = class ComUtils {
     const eleId = control.Id;
     switch (eleId) {
       case RibbonControlEnum.testBtn:
-        ComUtils.showDialog();
+        this.uploadOption();
         break;
       default:
         break;
@@ -408,7 +439,7 @@ window.ComUtils = class ComUtils {
    * @returns {boolean}
    */
   getRibbonEnabled(control) {
-    return true;
+    return !this.loading;
   }
 
   /**
@@ -418,6 +449,15 @@ window.ComUtils = class ComUtils {
    */
   getRibbonVisible(control) {
     return true;
+  }
+
+  /**
+   * 获取Ribbon标签名
+   * @param control
+   * @returns {string}
+   */
+  getRibbonLabel(control) {
+    return this.loading ? '更新中...' : '点击测试';
   }
 
   /***

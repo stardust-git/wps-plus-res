@@ -35,6 +35,10 @@ window.OnGetVisible = (control) => {
   return comUtils.getRibbonVisible(control);
 };
 
+window.OnGetLabel = (control) => {
+  return comUtils.getRibbonLabel(control);
+};
+
 /**
  * 处理Web端的文件
  * @param {Parameters<HandelWebFileInfoFunc>[0]} info
