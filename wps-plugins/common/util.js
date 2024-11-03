@@ -64,8 +64,6 @@ window.WpsClientTypeMap = {
   [WpsClientTypeEnum.演示]: window.WppUtils,
 };
 
-
-
 window.ServerUtils = (function () {
   /**
    网络请求工具@param {string} url@param {RequestInit} [options]@return {Promise<Object>}
@@ -107,7 +105,6 @@ window.ServerUtils = (function () {
     getBizDoc,
   };
 })();
-
 
 window.RibbonUtils = (function () {
   return {
@@ -165,6 +162,15 @@ window.ComUtils = class ComUtils {
    */
   static sendToWeb(msg) {
     wps.OAAssist.WebNotify(JSON.stringify(msg), true);
+  }
+
+  /**
+   * 打开网页
+   * @param {string} url
+   */
+  static openWebUrl(url) {
+    wps.TabPages.OpenWebUrl(url);
+    // wps.OAAssist.ShellExecute(url)
   }
 
   /**
