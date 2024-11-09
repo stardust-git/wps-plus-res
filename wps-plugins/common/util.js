@@ -156,6 +156,55 @@ window.ComUtils = class ComUtils {
   loading = false;
 
   /**
+   * 清理临时目录文件
+   * @param {string} tempDir
+   */
+  static clearTempDirFile(tempDir) {
+    if (!wps.FileSystem.Exists(tempDir)) {
+      return;
+    }
+    // 读取目录信息
+    const dirInfo = wps.FileSystem.readdirSync(tempDir);
+    // 目录下没有文件，不处理
+    if (!dirInfo || !dirInfo.length) {
+      return;
+    }
+    // 删除目录文件
+    dirInfo.forEach(childFileName => {
+      wps.FileSystem.Remove(tempDir + '/' + childFileName);
+    });
+  }
+
+  /**
+   * 深度清除临时文件，报错子文件
+   * @param {string} tempDir
+   */
+  static deepClearTempDir(tempDir) {
+    if (!wps.FileSystem.Exists(tempDir)) {
+      return;
+    }
+    const delFile = (dirPath) => {
+      const delResult = wps.FileSystem.Remove(dirPath);
+      if (delResult) {
+        return;
+      }
+      // 删除失败，说明是目录
+      const dirInfo = wps.FileSystem.readdirSync(dirPath);
+      // 目录下没有文件，直接删除文件
+      if (!dirInfo || !dirInfo.length) {
+        wps.FileSystem.rmdirSync(dirPath);
+        return;
+      }
+      // 递归删除子文件
+      dirInfo.forEach(childFileName => {
+        delFile(dirPath + '/' + childFileName);
+      });
+      wps.FileSystem.rmdirSync(dirPath);
+    };
+    delFile(tempDir);
+  };
+
+  /**
    * 获取当前文件类型
    * @returns {string | void}
    */
