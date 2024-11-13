@@ -608,7 +608,7 @@ window.ComUtils = class ComUtils {
     }
   }
 
-  onApplicationQuit(doc) {
+  onApplicationQuit() {
     this.delFileList.forEach(filePath => {
       wps.FileSystem.Remove(filePath);
     });
@@ -625,7 +625,7 @@ window.ComUtils = class ComUtils {
     // wps.ApiEvent.AddApiEventListener("WindowActivate", OnWindowActivate);
     if (this.clientType === WpsClientTypeEnum.文档) {
       wps.ApiEvent.AddApiEventListener('DocumentBeforeClose', (doc) => this.onBeforeClose(doc));
-      wps.ApiEvent.AddApiEventListener('ApplicationQuit', (doc) => this.onApplicationQuit(doc));
+      wps.ApiEvent.AddApiEventListener('ApplicationQuit', () => this.onApplicationQuit());
     }
     // wps.ApiEvent.AddApiEventListener("WorkbookBeforePrint", FileOutputDisable);
     // wps.ApiEvent.AddApiEventListener("WorkbookOpen", OnWorkbookOpen);
