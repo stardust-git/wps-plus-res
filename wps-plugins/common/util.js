@@ -366,7 +366,7 @@ window.ComUtils = class ComUtils {
 
   /**
    * 处理Web端的文件
-   * @callback HandelWebFileInfoFunc
+   * @callback HandleWebFileInfoFunc
    * @param {Object} info
    * @param {string} info.fileName 文件名
    * @param {string} info.userName 用户名
@@ -375,7 +375,7 @@ window.ComUtils = class ComUtils {
    * @param {string} info.downloadPath 下载链接
    * @returns {boolean}
    */
-  handelWebFileInfo(info) {
+  handleWebFileInfo(info) {
     if (!info || !info.fileName || !info.downloadPath) return false;
     const existFile = ComUtils.getStore(info.fileName);
     if (existFile) {

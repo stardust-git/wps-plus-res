@@ -41,8 +41,8 @@ window.OnGetLabel = (control) => {
 
 /**
  * 处理Web端的文件
- * @param {Parameters<HandelWebFileInfoFunc>[0]} info
+ * @param {Parameters<HandleWebFileInfoFunc>[0]} info
  */
 window.dispatcher = (info) => {
-  comUtils.handelWebFileInfo(info);
+  comUtils.handleWebFileInfo(info);
 };
