@@ -154,6 +154,7 @@ window.ComUtils = class ComUtils {
   clientType;
   mainTabId;
   loading = false;
+  delFileList = [];
 
   /**
    * 清理临时目录文件
@@ -274,6 +275,14 @@ window.ComUtils = class ComUtils {
    */
   static closeShowDialog() {
     window.close();
+  }
+
+  /**
+   * 转换全名成路径
+   * @param {string} fullName
+   */
+  static changeFullNameToPath(fullName) {
+    return fullName.replace(/\\/g, '/');
   }
 
   /**
@@ -412,17 +421,35 @@ window.ComUtils = class ComUtils {
     }
   }
 
+  onBeforeClose(doc) {
+    const fullNamePath = ComUtils.changeFullNameToPath(doc.FullName);
+    if (fullNamePath.includes(wps.Env.GetTempPath() + ADDON_TEMP_DIR_CONST + '/' + TEMP_FILE_PREFIX_CONST)) {
+      const res = confirm('是否需要删除');
+      if (res) {
+        this.delFileList.push(fullNamePath);
+      }
+    }
+  }
+
+  onApplicationQuit(doc) {
+    this.delFileList.forEach(filePath => {
+      wps.FileSystem.Remove(filePath);
+    });
+  }
+
   /**
    * 处理wps加载项加载时操作
    * @param ribbonUI
    * @returns {boolean}
    */
   dealWpsWorkTabLoad(ribbonUI) {
-    wps.ribbonUI = ribbonUI;
+    // wps.ribbonUI = ribbonUI;
     //挂载WPS的表格事件处理函数
     // wps.ApiEvent.AddApiEventListener("WindowActivate", OnWindowActivate);
-    // wps.ApiEvent.AddApiEventListener("WorkbookBeforeClose", OnWorkbookBeforeClose);
-    // wps.ApiEvent.AddApiEventListener("WorkbookBeforeSave", FileOutputDisable);
+    if (this.clientType === WpsClientTypeEnum.文档) {
+      wps.ApiEvent.AddApiEventListener('DocumentBeforeClose', (doc) => this.onBeforeClose(doc));
+      wps.ApiEvent.AddApiEventListener('ApplicationQuit', (doc) => this.onApplicationQuit(doc));
+    }
     // wps.ApiEvent.AddApiEventListener("WorkbookBeforePrint", FileOutputDisable);
     // wps.ApiEvent.AddApiEventListener("WorkbookOpen", OnWorkbookOpen);
     // wps.ApiEvent.AddApiEventListener("NewWorkbook", OnWorkbookNew);
@@ -433,7 +460,7 @@ window.ComUtils = class ComUtils {
     // wps.CommandBars.FindControl(null, 848).Enabled = false;
     // wps.CommandBars.FindControl(null, 848).Visible = false;
 
-    return true;
+    // return true;
 
   }
 

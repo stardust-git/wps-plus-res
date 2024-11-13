@@ -1,3 +1,6 @@
+window.ADDON_TEMP_DIR_CONST = '/松果测试';
+window.TEMP_FILE_PREFIX_CONST = '.temp_prefix_';
+
 window.RibbonControlEnum = {
   testBtn: 'testBtn',
 };
