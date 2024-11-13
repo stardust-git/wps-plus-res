@@ -422,11 +422,28 @@ window.ComUtils = class ComUtils {
   }
 
   /**
-   * 转换全名成路径
-   * @param {string} fullName
+   * 获取文档路径
+   * @return {string}
    */
-  static changeFullNameToPath(fullName) {
-    return fullName.replace(/\\/g, '/');
+  static getDocumentPath() {
+    return wps.Env.GetHomePath() + '/' + 'Documents';
+  }
+
+  /**
+   * 得到不重复的文件名
+   * @param {string} pathName
+   * @return {string}
+   */
+  static getNotSameFileName(pathName) {
+    if (!wps.FileSystem.Exists(pathName)) {
+      return pathName;
+    }
+    const suffixIdx = pathName.lastIndexOf('.');
+    const dirIdx = pathName.lastIndexOf('/');
+    if (suffixIdx < dirIdx) {
+      return this.getNotSameFileName(pathName);
+    }
+    return this.getNotSameFileName(pathName.slice(0, suffixIdx) + '(1)' + pathName.slice(suffixIdx));
   }
 
   /**
@@ -566,10 +583,26 @@ window.ComUtils = class ComUtils {
   }
 
   onBeforeClose(doc) {
-    const fullNamePath = ComUtils.changeFullNameToPath(doc.FullName);
+    const fullNamePath = wps.FileSystem.absoluteFilePath(doc.FullName);
     if (fullNamePath.includes(wps.Env.GetTempPath() + ADDON_TEMP_DIR_CONST + '/' + TEMP_FILE_PREFIX_CONST)) {
-      const res = confirm('是否需要删除');
+      const res = confirm('当前文件是临时文件，是否保存到本地文档');
       if (res) {
+        const newPath = ComUtils.getDocumentPath() + '/' + doc.Name;
+        alert(newPath);
+        if (wps.FileSystem.Exists(newPath)) {
+          const res2 = confirm('文件名已存在，是否覆盖');
+          if (res2) {
+            this.getActionDto().SaveAs(newPath);
+          } else {
+            const newPath2 = ComUtils.getNotSameFileName(newPath);
+            this.getActionDto().SaveAs(newPath2);
+          }
+
+        }else {
+          this.getActionDto().SaveAs(newPath);
+        }
+        wps.FileSystem.Remove(fullNamePath);
+      } else {
         this.delFileList.push(fullNamePath);
       }
     }
