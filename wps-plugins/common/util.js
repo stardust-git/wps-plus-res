@@ -150,6 +150,150 @@ window.RibbonUtils = (function () {
   };
 })();
 
+window.ConfigUtils = (function () {
+  /**
+   * 获取招乎文档配置目录
+   * @return {string}
+   */
+  const getConfigDir = () => {
+    let dirPath = '';
+    try {
+      // 取系统配置路径
+      dirPath = wps.Env.GetAppDataPath();
+    } catch (e) {
+    }
+    if (!dirPath) {
+      // 取临时文件路径（兼容iOS）
+      dirPath = wps.Env.GetTempPath();
+    }
+    return dirPath;
+  };
+
+  /**
+   * 获取加载项配置路径
+   */
+  const getAddonConfigPath = () => {
+    return CONFIG_ROOT_PATH_CONST + '/' + ADDON_CONFIG_FILE_NAME;
+  };
+
+  /**
+   * 读取插件配置信息
+   * @return {Object | null}
+   */
+  const readAddonConfig = () => {
+    const dirPath = getConfigDir();
+    if (!dirPath) {
+      return null;
+    }
+    const filePath = dirPath + getAddonConfigPath();
+    if (!wps.FileSystem.Exists(filePath)) {
+      return null;
+    }
+    try {
+      const fileString = wps.FileSystem.ReadFile(filePath);
+      const configArr = fileString.split('\n');
+      const result = {};
+      let configGroupName = '';
+      for (const configStr of configArr) {
+        // 以[xxx]为配置组
+        const matchInfo = configStr.match(/\[(.+?)\]/);
+        if (matchInfo) {
+          configGroupName = matchInfo[1];
+          result[configGroupName] = {};
+          continue;
+        }
+        // 以xxx=yyy为配置键值对
+        const arr = configStr.split('=');
+        if (configGroupName && arr.length === 2) {
+          result[configGroupName][arr[0]] = arr[1];
+        }
+      }
+      return result;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  /**
+   * 配置对象转字符串
+   */
+  const configObjToString = (configObj) => {
+    return Object.values(AddonConfigGroupEnum).reduce((res, group) => {
+      const groupCnt = configObj[group];
+      if (!groupCnt) {
+        return res;
+      }
+      let config = `[${group}]\n`;
+      Object.entries(groupCnt).forEach(([key, value]) => {
+        config += `${key}=${value}\n`;
+      });
+      return res + config + '\n';
+    }, '');
+  };
+
+  /**
+   * 写加载项配置文件
+   * @param {AddonConfigGroupEnum} configGroup
+   * @param {string} key
+   * @param {string} value
+   */
+  const writeAddonConfig = (configGroup, key, value) => {
+    const dirPath = getConfigDir();
+    if (!dirPath) {
+      return false;
+    }
+    // 创建根路径
+    if (!wps.FileSystem.Exists(dirPath + CONFIG_ROOT_PATH_CONST)) {
+      wps.FileSystem.Mkdir(dirPath + CONFIG_ROOT_PATH_CONST);
+    }
+    const filePath = dirPath + getAddonConfigPath();
+
+    if (!wps.FileSystem.Exists(filePath)) {
+      const result = configObjToString({
+        [configGroup]: {
+          [key]: value,
+        },
+      });
+      wps.FileSystem.WriteFile(filePath, result);
+      return true;
+    }
+    const configObj = readAddonConfig();
+    if (!configObj) {
+      return false;
+    }
+    if (!configObj[configGroup]) {
+      configObj[configGroup] = {};
+    }
+    configObj[configGroup][key] = value;
+    wps.FileSystem.WriteFile(filePath, configObjToString(configObj));
+    return true;
+  };
+  return {
+    readAddonConfig,
+    writeAddonConfig,
+    configObjToString,
+    getConfigDir,
+    /**
+     * 获取保存配置
+     * @return {boolean}
+     */
+    getSaveTip() {
+      const saveTip = readAddonConfig()?.[AddonConfigGroupEnum.通用]?.saveTip;
+      if (saveTip && Number(saveTip)) {
+        return true;
+      }
+      return false;
+    },
+    /**
+     * 设置开启保存提示配置
+     * @param {boolean} state
+     */
+    setSaveTip(state) {
+      writeAddonConfig(AddonConfigGroupEnum.通用, 'saveTip', state ? 1 : 0);
+    },
+  };
+})();
+
 window.ComUtils = class ComUtils {
   clientType;
   mainTabId;
