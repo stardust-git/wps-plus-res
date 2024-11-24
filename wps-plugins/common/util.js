@@ -598,7 +598,7 @@ window.ComUtils = class ComUtils {
             this.getActionDto().SaveAs(newPath2);
           }
 
-        }else {
+        } else {
           this.getActionDto().SaveAs(newPath);
         }
         wps.FileSystem.Remove(fullNamePath);
@@ -745,4 +745,8 @@ window.ComUtils = class ComUtils {
     const doc = this.getActionDto();
     doc.SaveAsUrl(doc.Name, `http://127.0.0.1:1024/file/upload?token=123456&filename=test`, 'file', success, fail);
   }
+
+  getEnabledSystemTab = () => {
+    return true;
+  };
 };

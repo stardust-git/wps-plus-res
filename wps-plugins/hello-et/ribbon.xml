@@ -8,5 +8,69 @@
         </group>
       </tab>
     </tabs>
+
+    <!-- 在这里可以定义WPS自身的tab页签的一些行为，页签的getEnabled和getVisible等效，无onAction事件-->
+    <!-- 全集可以去open.wps.cn/docs/office的idMso列表查询-->
+    <!--WPS自身功能常见tab的idMso如下-->
+    <!--开发工具-->
+    <tab idMso="TabSecurity" getEnabled="OnGetEnabledSystemTab"/>
+    <!--开发工具-->
+    <tab idMso="TabDeveloper" getEnabled="OnGetEnabledSystemTab"/>
+    <!--云服务-->
+    <tab idMso="TabWorkSpace" getEnabled="OnGetEnabledSystemTab"/>
+
+    <tab idMso="TabPrintPreview" getEnabled="OnGetEnabledSystemTab"/>
+    <tab idMso="TabAddIns" getEnabled="OnGetEnabledSystemTab"/>
+    <tab idMso="TabPictureToolsFormat" getEnabled="OnGetEnabledSystemTab"/>
   </ribbon>
+
+  <commands>
+    <!-- idMso支持getEnabled和onAction，不支持visible属性和事件-->
+    <command idMso="ComAddInsDialog" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="CopyPictureDialog" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="DocumentSplitAndMerge" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="exportToOFD" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="ExportToPDF" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileBackupHistory" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileBackupManagement" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileEncrypt" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileExportToPDF" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileInfoMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileMenuFileEncrypt" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileMenuSendMail" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FilePrint" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FilePrintEntireWorkbookQuick" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FilePrintMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FilePrintPreview" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FilePrintQuick" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSave" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAs" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsExcelEt" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsExcelEtt" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsExcelEtx" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsExcelXls" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsExcelXlsx" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsExcelXlt" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsOfd" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsOtherFormats" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsPDF" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsPdfOrXps" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileSaveAsPicture" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="FileShare" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="MacroPlay" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="MacroRecord" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="MenuMacros" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="PrintAreaMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="ReviewAcceptChangeMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="ReviewRejectChangeMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="ReviewTrackChangesMenu" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="SaveAll" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="SaveAsOfd" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="SaveAsPDF" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="SaveAsPicture" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="Security" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="ViewCode" getEnabled="OnGetEnabledSystemTab"/>
+    <command idMso="VisualBasic" getEnabled="OnGetEnabledSystemTab"/>
+  </commands>
 </customUI>

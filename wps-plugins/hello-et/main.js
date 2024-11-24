@@ -39,6 +39,10 @@ window.OnGetLabel = (control) => {
   return comUtils.getRibbonLabel(control);
 };
 
+window.OnGetEnabledSystemTab = (control) => {
+  return comUtils.getEnabledSystemTab(control);
+};
+
 /**
  * 处理Web端的文件
  * @param {Parameters<HandleWebFileInfoFunc>[0]} info
